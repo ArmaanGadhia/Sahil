@@ -24,6 +24,7 @@ __pycache__/
 # Logs & temporary files
 *.log
 scratch/
+push_to_github.bat
 
 # OS and Editor metadata
 .DS_Store
