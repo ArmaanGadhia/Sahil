@@ -115,13 +115,19 @@ html {
   font-family: var(--font-stack);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   line-height: 1.5;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
+  position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -1144,6 +1150,13 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   gap: 40px;
   align-items: center;
   margin-bottom: 40px;
+  width: 100%;
+  min-width: 0;
+}
+
+.repair-layout > div {
+  min-width: 0;
+  width: 100%;
 }
 
 .repair-card-list {
@@ -1151,6 +1164,8 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
   margin-top: 24px;
+  width: 100%;
+  min-width: 0;
 }
 
 .repair-pill-card {
@@ -1158,6 +1173,17 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 18px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Reviews Grid (Replaces inline grid) */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-box {
@@ -1166,6 +1192,10 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   border-radius: var(--radius-lg);
   padding: 32px;
   box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .form-input-grid {
@@ -1173,12 +1203,16 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 18px;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-field label {
@@ -1198,6 +1232,11 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   font-size: 0.9rem;
   outline: none;
   transition: var(--transition-smooth);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
 }
 
 .form-field select option {
@@ -1699,17 +1738,36 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
     gap: 14px;
   }
 
-  /* Repair Section */
+  /* Repair Section on Mobile */
   .repair-section {
     padding: 45px 0;
+    overflow: hidden;
   }
   .repair-layout {
     grid-template-columns: 1fr;
     gap: 24px;
+    width: 100%;
+    min-width: 0;
+  }
+  .repair-layout > div {
+    width: 100%;
+    min-width: 0;
+  }
+  .repair-card-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+  .repair-pill-card {
+    width: 100%;
+    min-width: 0;
   }
   .form-box {
     padding: 20px 16px;
     border-radius: var(--radius-md);
+    width: 100%;
+    min-width: 0;
   }
   .form-input-grid {
     grid-template-columns: 1fr;
@@ -1725,23 +1783,39 @@ body.theme-light .bento-tile.bento-dark .btn-secondary {
   /* Branches Section */
   .branches-section {
     padding: 45px 0;
+    overflow: hidden;
   }
   .branch-cards-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+    width: 100%;
+    min-width: 0;
   }
   .branch-box {
     padding: 20px 16px;
     border-radius: var(--radius-md);
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Reviews on Mobile */
+  .reviews-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
   }
 
   /* Footer on Mobile */
   .site-footer {
     padding: 35px 0 20px;
+    overflow: hidden;
   }
   .footer-columns {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    width: 100%;
+    min-width: 0;
   }
 
   /* Cart & Checkout on Mobile */

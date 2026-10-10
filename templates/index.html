@@ -588,7 +588,7 @@
                 <label for="branch">Select Belagavi Branch</label>
                 <select id="branch" name="branch">
                   {% for b in branches %}
-                  <option value="{{ b.name }}">{{ b.branch_num }} - {{ b.name }} ({{ b.address }})</option>
+                  <option value="{{ b.name }}">{{ b.branch_num }} - {{ b.name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -728,7 +728,7 @@
           certified work.</p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+      <div class="reviews-grid">
         {% for r in reviews %}
         <div
           style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 22px;">
