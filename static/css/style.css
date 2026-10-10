@@ -513,6 +513,126 @@ textarea {
   display: block;
 }
 
+/* =========================================================================
+   3D HERO IMAGE ANIMATIONS & PERSPECTIVE ENGINE
+   ========================================================================= */
+.hero-3d-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 25px;
+  user-select: none;
+}
+
+.hero-3d-card {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  transform-style: preserve-3d;
+  transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  border-radius: var(--radius-xl);
+  animation: hero3dFloat 6s ease-in-out infinite alternate;
+}
+
+.hero-3d-card.is-interacting {
+  animation: none !important;
+  transition: transform 0.08s ease-out;
+}
+
+.hero-3d-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-xl);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.14));
+  transition: filter 0.3s ease;
+}
+
+.hero-macbook-img {
+  border-radius: var(--radius-lg);
+}
+
+/* Dynamic 3D Glare / Specular Lighting Sheen */
+.hero-3d-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  transition: opacity 0.35s ease;
+  z-index: 5;
+}
+
+/* 3D Realistic Ground Reflection & Depth Shadow */
+.hero-3d-shadow {
+  width: 72%;
+  height: 26px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0) 72%);
+  margin-top: 14px;
+  filter: blur(10px);
+  border-radius: 50%;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  animation: hero3dShadowPulse 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .hero-3d-shadow {
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 72%);
+  filter: blur(14px);
+}
+
+[data-theme="dark"] .hero-3d-img {
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.55));
+}
+
+/* 3D Ambient Levitation Keyframes */
+@keyframes hero3dFloat {
+  0% {
+    transform: translateY(0px) rotateX(2deg) rotateY(-2.5deg) rotateZ(-0.4deg);
+  }
+  50% {
+    transform: translateY(-18px) rotateX(-2deg) rotateY(2.2deg) rotateZ(0.4deg);
+  }
+  100% {
+    transform: translateY(3px) rotateX(1.8deg) rotateY(-1.6deg) rotateZ(-0.2deg);
+  }
+}
+
+@keyframes hero3dShadowPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 0.32;
+  }
+  100% {
+    transform: scale(0.92);
+    opacity: 0.72;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-3d-stage {
+    perspective: 800px;
+    padding: 10px 0 15px;
+  }
+  .hero-3d-shadow {
+    width: 85%;
+    height: 18px;
+    margin-top: 8px;
+  }
+}
+
 /* 7. CATEGORY ICON STRIP (MATCHING SCREENSHOT) */
 .category-icon-strip {
   background: var(--bg-secondary);

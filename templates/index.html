@@ -103,9 +103,13 @@
         <a href="#services" class="btn-secondary">Repair Services</a>
       </div>
 
-      <div class="hero-twin-img-wrap">
-        <img src="{{ url_for('static', filename='images/mobile-repairing.png') }}"
-          alt="iPhone 16 Pro Twin Devices on Reflective Ground" class="hero-twin-img">
+      <div class="hero-twin-img-wrap hero-3d-stage" data-hero-3d="true">
+        <div class="hero-3d-card">
+          <div class="hero-3d-glare"></div>
+          <img src="{{ url_for('static', filename='images/mobile-repairing.png') }}"
+            alt="All Mobiles Repair Services - Sahil Communication" class="hero-twin-img hero-3d-img">
+        </div>
+        <div class="hero-3d-shadow"></div>
       </div>
     </div>
   </section>
@@ -162,9 +166,13 @@
         <a href="#mobiles" class="btn-secondary">Buy</a>
       </div>
 
-      <div class="hero-macbook-img-wrap">
-        <img src="{{ url_for('static', filename='images/twin-iphones.jpg') }}"
-          alt="Two MacBook Pros with Liquid Retina XDR displays" style="width: 100%; border-radius: var(--radius-lg);">
+      <div class="hero-macbook-img-wrap hero-3d-stage" data-hero-3d="true">
+        <div class="hero-3d-card">
+          <div class="hero-3d-glare"></div>
+          <img src="{{ url_for('static', filename='images/twin-iphones.jpg') }}"
+            alt="Second Hand Certified Mobiles" class="hero-3d-img hero-macbook-img">
+        </div>
+        <div class="hero-3d-shadow"></div>
       </div>
     </div>
   </section>
@@ -823,6 +831,97 @@
         if (toggle) toggle.checked = false;
       });
     });
+
+    // =========================================================================
+    // 3D HERO INTERACTION & PERSPECTIVE ENGINE
+    // =========================================================================
+    (function initHero3DEngine() {
+      var stages = document.querySelectorAll('.hero-3d-stage[data-hero-3d="true"]');
+      if (!stages.length) return;
+
+      stages.forEach(function (stage) {
+        var card = stage.querySelector('.hero-3d-card');
+        var glare = stage.querySelector('.hero-3d-glare');
+        var shadow = stage.querySelector('.hero-3d-shadow');
+        if (!card) return;
+
+        var isHovering = false;
+        var currentTiltX = 0;
+        var currentTiltY = 0;
+        var targetTiltX = 0;
+        var targetTiltY = 0;
+        var rafId = null;
+        var maxTilt = 14;
+
+        function update3D() {
+          currentTiltX += (targetTiltX - currentTiltX) * 0.12;
+          currentTiltY += (targetTiltY - currentTiltY) * 0.12;
+
+          card.style.transform = 'perspective(1200px) rotateX(' + currentTiltX.toFixed(2) + 'deg) rotateY(' + currentTiltY.toFixed(2) + 'deg) scale3d(1.025, 1.025, 1.025)';
+
+          if (shadow) {
+            var shiftX = (-currentTiltY * 2.2).toFixed(1);
+            var scale = (1 + Math.abs(currentTiltX) * 0.015).toFixed(2);
+            shadow.style.transform = 'translateX(' + shiftX + 'px) scale(' + scale + ')';
+          }
+
+          if (isHovering || Math.abs(targetTiltX - currentTiltX) > 0.05 || Math.abs(targetTiltY - currentTiltY) > 0.05) {
+            rafId = requestAnimationFrame(update3D);
+          } else {
+            card.style.transform = '';
+            if (shadow) shadow.style.transform = '';
+            card.classList.remove('is-interacting');
+            rafId = null;
+          }
+        }
+
+        function onMove(clientX, clientY) {
+          var rect = stage.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+
+          var normX = (clientX - rect.left) / rect.width - 0.5;
+          var normY = (clientY - rect.top) / rect.height - 0.5;
+
+          targetTiltX = -normY * maxTilt;
+          targetTiltY = normX * maxTilt;
+
+          if (glare) {
+            var gx = ((normX + 0.5) * 100).toFixed(1);
+            var gy = ((normY + 0.5) * 100).toFixed(1);
+            glare.style.background = 'radial-gradient(circle at ' + gx + '% ' + gy + '%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 70%)';
+            glare.style.opacity = '1';
+          }
+
+          if (!isHovering) {
+            isHovering = true;
+            card.classList.add('is-interacting');
+            if (!rafId) rafId = requestAnimationFrame(update3D);
+          }
+        }
+
+        function onLeave() {
+          isHovering = false;
+          targetTiltX = 0;
+          targetTiltY = 0;
+          if (glare) glare.style.opacity = '0';
+          if (!rafId) rafId = requestAnimationFrame(update3D);
+        }
+
+        stage.addEventListener('mousemove', function (e) {
+          onMove(e.clientX, e.clientY);
+        });
+
+        stage.addEventListener('mouseleave', onLeave);
+
+        stage.addEventListener('touchmove', function (e) {
+          if (e.touches && e.touches[0]) {
+            onMove(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }, { passive: true });
+
+        stage.addEventListener('touchend', onLeave);
+      });
+    })();
   </script>
 
 </body>
