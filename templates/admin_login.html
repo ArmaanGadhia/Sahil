@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Sahil Communication</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="theme-{{ theme }}">
+
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Admin Portal</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/" class="btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;">&larr; Back to Store</a>
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Theme">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-login-wrap" style="padding: 70px 16px; display: flex; align-items: center; justify-content: center; min-height: 80vh;">
+    <div class="admin-login-card" style="width: 100%; max-width: 440px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: clamp(22px, 5vw, 40px); box-shadow: var(--shadow-card);">
+      
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div style="font-size: 2.2rem; margin-bottom: 10px;">🔐</div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Admin Console</h1>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage products, orders, repair leads & inventory</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="background: rgba(255, 69, 58, 0.15); border: 1px solid rgba(255, 69, 58, 0.3); color: #ff6b6b; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 18px; text-align: center;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action="/admin/login" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-field" style="margin-bottom: 16px;">
+          <label for="username">Admin Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter username" autocomplete="username" required autofocus>
+        </div>
+
+        <div class="form-field" style="margin-bottom: 24px;">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter password" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 13px; font-size: 0.95rem; border-radius: var(--radius-pill);">
+          Sign In to Dashboard &rsaquo;
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+  </script>
+
+</body>
+</html>

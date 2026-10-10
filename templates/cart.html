@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review your Bag | Sahil Communication Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="theme-{{ theme }}">
+
+  <!-- Global Nav -->
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Store</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="/">🛍️Store</a></li>
+        <li class="nav-item"><a href="/#mobiles">📱Second Hand Mobiles</a></li>
+        <li class="nav-item"><a href="/#accessories">🎧Accessories</a></li>
+        <li class="nav-item"><a href="/#spare-parts">⚙️Spare Parts</a></li>
+        <li class="nav-item"><a href="/#services">🔧Repairs</a></li>
+        <li class="nav-item"><a href="/#branches">📍Branches</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Theme">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+        <a href="/cart" class="nav-cart-btn" style="color: var(--apple-blue);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          {% if cart_count > 0 %}
+          <span class="cart-counter">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+        <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle Navigation">
+          <span></span><span></span><span></span>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <main class="cart-page-wrap">
+    <div class="container">
+
+      <div style="margin-bottom: 30px;">
+        <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em;">
+          Review your Bag.
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">
+          Free standard delivery in Belagavi or 10-minute instant pickup across our 3 branches.
+        </p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div
+        style="background: rgba(48, 209, 88, 0.15); border: 1px solid rgba(48, 209, 88, 0.3); color: var(--apple-green); padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 20px;">
+        ✓ {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      {% if cart_items %}
+      <div class="cart-layout">
+
+        <!-- Items List -->
+        <div class="cart-items-card">
+          {% for item in cart_items %}
+          <div class="cart-item-row">
+            <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.title }}"
+              class="cart-item-img">
+
+            <div style="flex-grow: 1;">
+              <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;">{{ item.title }}</h3>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+                Category: {{ item.category.replace('_', ' ').title() }} • {{ item.condition }}
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">
+                ₹{{ "{:,}".format(item.price) }}
+              </div>
+            </div>
+
+            <div class="cart-qty-ctrl">
+              <form action="/cart/update/{{ item.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="decrease">
+                <button type="submit" class="cart-qty-btn">&minus;</button>
+              </form>
+              <span style="font-weight: 600; font-size: 0.95rem; min-width: 20px; text-align: center;">{{ item.quantity
+                }}</span>
+              <form action="/cart/update/{{ item.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="increase">
+                <button type="submit" class="cart-qty-btn">&plus;</button>
+              </form>
+              <form action="/cart/update/{{ item.id }}" method="POST" style="margin-left: 12px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="remove">
+                <button type="submit"
+                  style="background: none; border: none; color: var(--apple-red); font-size: 0.85rem; cursor: pointer;">Remove</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Summary Box -->
+        <div class="cart-summary-box">
+          <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Order Summary</h2>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-secondary);">
+            <span>Subtotal ({{ cart_count }} items)</span>
+            <span style="color: var(--text-primary); font-weight: 600;">₹{{ "{:,}".format(total) }}</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-secondary);">
+            <span>Shipping / Branch Pickup</span>
+            <span style="color: var(--apple-green); font-weight: 600;">FREE</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.95rem; color: var(--text-secondary);">
+            <span>Warranty Documentation</span>
+            <span style="color: var(--apple-green); font-weight: 600;">Included</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 16px; margin-bottom: 24px; font-size: 1.3rem; font-weight: 700;">
+            <span>Total</span>
+            <span>₹{{ "{:,}".format(total) }}</span>
+          </div>
+
+          <a href="/checkout" class="btn-primary"
+            style="width: 100%; padding: 14px; font-size: 1rem; border-radius: var(--radius-pill); text-align: center;">
+            Check Out &rsaquo;
+          </a>
+
+          <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">
+            🔒 Instant Pickup at Shivaji Nagar, Raviwar Peth, or Shivbasava Nagar.
+          </div>
+        </div>
+
+      </div>
+      {% else %}
+      <div
+        style="text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🛍️</div>
+        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 8px;">Your Bag is empty.</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Explore our certified second-hand mobiles, genuine
+          accessories, or spare parts.</p>
+        <a href="/#mobiles" class="btn-primary">Continue Shopping &rsaquo;</a>
+      </div>
+      {% endif %}
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="text-align: center;">
+      Copyright &copy; 2026 Sahil Communication & Mobile Repairs. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        var toggle = document.getElementById('nav-toggle');
+        if (toggle) toggle.checked = false;
+      });
+    });
+  </script>
+
+</body>
+
+</html>

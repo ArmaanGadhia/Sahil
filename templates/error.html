@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ current_theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ error_code }} - {{ error_title }} | Sahil Communication</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="theme-{{ current_theme }}">
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Communication</span>
+      </a>
+      <div class="nav-actions">
+        <a href="/" class="btn-primary" style="padding: 6px 16px; font-size: 0.85rem;">&larr; Return Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <main style="min-height: 75vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+    <div style="max-width: 520px; width: 100%; text-align: center; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 48px 32px; box-shadow: var(--shadow-card);">
+      <div style="font-size: 3.5rem; margin-bottom: 16px;">🛡️</div>
+      <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+        {{ error_code }} - {{ error_title }}
+      </h1>
+      <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 28px;">
+        {{ error_message }}
+      </p>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="/" class="btn-primary">Return to Store</a>
+        <a href="/cart" class="btn-secondary">View Bag</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

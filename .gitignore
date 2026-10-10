@@ -1,0 +1,32 @@
+# ===================================================
+# SENSITIVE ENVIRONMENT VARIABLES & API KEYS
+# Never commit credentials or secrets to GitHub
+# ===================================================
+.env
+.env.*
+!.env.example
+.secret_key
+
+# Large binaries & tunnel executables
+cloudflared.exe
+*.exe
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Local SQLite databases
+*.db
+*.sqlite3
+
+# Logs & temporary files
+*.log
+scratch/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

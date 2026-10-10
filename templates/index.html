@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sahil Communication & Mobile Repairs | Pre-Owned Flagships, Accessories & Genuine Spare Parts</title>
+  <meta name="description"
+    content="Belagavi's premier multi-branch tech destination for certified second-hand iPhones, flagship Androids, original accessories, and smartphone spare parts.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="theme-{{ theme }}">
+
+  <!-- Top Announcement Ribbon (Apple Style) -->
+  <aside class="announcement-ribbon">
+    <div class="ribbon-content">
+      <span class="ribbon-badge">Belagavi Trusted</span>
+      <span class="ribbon-rating">★ {{ store.rating }} ({{ store.reviews_count }} Reviews)</span>
+      <span>• 3 Branches in Belagavi</span>
+      <span>• Hours: {{ store.timing }}</span>
+      <a href="#branches" class="ribbon-link">Find Nearest Branch &rsaquo;</a>
+      <a href="/admin" class="btn-admin-link">⚙️ Admin Console</a>
+    </div>
+  </aside>
+
+  <!-- Apple Global Navigation -->
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Communication</span>
+      </a>
+
+      <!-- Pure CSS Mobile Toggle Input (stays before nav-menu for CSS sibling selector) -->
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="/">🛍️Store</a></li>
+        <li class="nav-item"><a href="#mobiles">📱Second Hand Mobiles</a></li>
+        <li class="nav-item"><a href="#accessories">🎧Accessories</a></li>
+        <li class="nav-item"><a href="#spare-parts">⚙️Spare Parts</a></li>
+        <li class="nav-item"><a href="#services">🔧Repairs</a></li>
+        <li class="nav-item"><a href="#branches">📍Branches</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Dark / Light Mode Toggle Button -->
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Dark/Light Mode">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+
+        <!-- Shopping Bag with Counter -->
+        <a href="/cart" class="nav-cart-btn" title="View Shopping Bag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          {% if cart_count > 0 %}
+          <span class="cart-counter">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+
+        <!-- Mobile Hamburger Toggle Icon -->
+        <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle Navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="container" style="margin-top: 16px;">
+    {% for category, message in messages %}
+    <div
+      style="background: rgba(48, 209, 88, 0.15); border: 1px solid rgba(48, 209, 88, 0.3); color: var(--apple-green); padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.9rem; text-align: center;">
+      <strong>✓ {{ message }}</strong>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- =========================================================================
+       HERO 1: iPHONE 16 PRO (MATCHING SCREENSHOT)
+       ========================================================================= -->
+  <section class="hero-apple-showcase">
+    <div class="container">
+      <h1 class="hero-main-title">All Mobiles Repair Services</h1>
+      <p class="hero-gradient-subtitle">Welcome, Everyone </p>
+
+      <div class="hero-button-row">
+        <a href="#services" class="btn-secondary">Repair Services</a>
+      </div>
+
+      <div class="hero-twin-img-wrap">
+        <img src="{{ url_for('static', filename='images/mobile-repairing.png') }}"
+          alt="iPhone 16 Pro Twin Devices on Reflective Ground" class="hero-twin-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CATEGORY ICON STRIP (MATCHING SCREENSHOT BELOW HERO 1)
+       ========================================================================= -->
+  <!--<section class="category-icon-strip">
+    <div class="icon-strip-container">
+      <a href="#mobiles" class="strip-item">
+        <div class="strip-icon">📱</div>
+        <span>Second Hand Mobiles</span>
+      </a>
+      <a href="#accessories" class="strip-item">
+        <div class="strip-icon">🎧</div>
+        <span>Accessories</span>
+      </a>
+      <a href="#spare-parts" class="strip-item">
+        <div class="strip-icon">⚙️</div>
+        <span>Spare Parts</span>
+      </a>
+      <a href="#macbook" class="strip-item">
+        <div class="strip-icon">💻</div>
+        <span>Mac & Laptops</span>
+      </a>
+      <a href="#bento-ipad" class="strip-item">
+        <div class="strip-icon">📟</div>
+        <span>iPad & Tablets</span>
+      </a>
+      <a href="#bento-watch" class="strip-item">
+        <div class="strip-icon">⌚</div>
+        <span>Smartwatches</span>
+      </a>
+      <a href="#services" class="strip-item">
+        <div class="strip-icon">🔧</div>
+        <span>Precision Repairs</span>
+      </a>
+      <a href="#branches" class="strip-item">
+        <div class="strip-icon">📍</div>
+        <span>Belagavi Branches</span>
+      </a>
+    </div>
+  </section>-->
+
+  <!-- =========================================================================
+       HERO 2: MACBOOK PRO (MATCHING SCREENSHOT)
+       ========================================================================= -->
+  <section class="hero-macbook-showcase" id="macbook">
+    <div class="container">
+      <h2 class="hero-macbook-title">Second Hand Mobiles</h2>
+      <p class="hero-macbook-sub">At Best prices !!!</p>
+
+      <div class="hero-button-row">
+        <a href="#mobiles" class="btn-secondary">Buy</a>
+      </div>
+
+      <div class="hero-macbook-img-wrap">
+        <img src="{{ url_for('static', filename='images/twin-iphones.jpg') }}"
+          alt="Two MacBook Pros with Liquid Retina XDR displays" style="width: 100%; border-radius: var(--radius-lg);">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       DISTINCT SECTION 1: SECOND HAND MOBILES
+       ========================================================================= -->
+  <section class="distinct-section distinct-mobiles-bg" id="mobiles">
+    <div class="container">
+
+      <div class="section-head">
+        <span class="section-eyebrow">SAHIL CERTIFIED PRE-OWNED</span>
+        <h2 class="section-title">Second Hand Mobiles.</h2>
+        <p class="section-desc">
+          Every phone undergoes a strict 32-point diagnostic scan, verified genuine parts, clean legal IMEI, and
+          includes up to 6 months in-store warranty.
+        </p>
+      </div>
+
+      <div class="product-grid-modern">
+        {% for p in mobiles %}
+        <div class="card-apple">
+          <div class="card-top">
+            <span class="badge badge-blue">{{ p.badge }}</span>
+            <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">{{ p.condition
+              }}</span>
+          </div>
+
+          <div class="card-img-box">
+            <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.title }}" class="card-img">
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">{{ p.title }}</h3>
+
+            <div class="card-chips">
+              {% if p.battery_health != 'N/A' %}
+              <span class="chip chip-green">⚡ {{ p.battery_health }}</span>
+              {% endif %}
+              <span class="chip">{{ p.storage }}</span>
+              <span class="chip">{{ p.color }}</span>
+              {% for spec in p.specs[:2] %}
+              <span class="chip">{{ spec }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="card-pricing-row">
+              <div>
+                <span class="price-curr">₹{{ "{:,}".format(p.price) }}</span>
+                <span class="price-was">₹{{ "{:,}".format(p.original_price) }}</span>
+              </div>
+              <span class="price-save">Save ₹{{ "{:,}".format(p.original_price - p.price) }}</span>
+            </div>
+
+            <!-- Online Buying Options -->
+            <div class="card-buy-actions">
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="buy_now">
+                <button type="submit" class="btn-card-buy" style="width: 100%;">Buy Now</button>
+              </form>
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-card-bag" style="width: 100%;">+ Add to Bag</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       DISTINCT SECTION 2: ACCESSORIES
+       ========================================================================= -->
+  <section class="distinct-section distinct-accessories-bg" id="accessories">
+    <div class="container">
+
+      <div class="section-head">
+        <span class="section-eyebrow">PREMIUM COMPANIONS</span>
+        <h2 class="section-title">Genuine Accessories.</h2>
+        <p class="section-desc">
+          Original Apple adapters, MagSafe wireless docks, certified AirPods Pro, ultra-fast braided cables, and
+          military-grade drop cases.
+        </p>
+      </div>
+
+      <div class="product-grid-modern">
+        {% for p in accessories %}
+        <div class="card-apple">
+          <div class="card-top">
+            <span class="badge badge-green">{{ p.badge }}</span>
+            <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ p.warranty }}</span>
+          </div>
+
+          <div class="card-img-box">
+            <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.title }}" class="card-img">
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">{{ p.title }}</h3>
+
+            <div class="card-chips">
+              <span class="chip">{{ p.storage }}</span>
+              <span class="chip">{{ p.color }}</span>
+              {% for spec in p.specs[:2] %}
+              <span class="chip">{{ spec }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="card-pricing-row">
+              <div>
+                <span class="price-curr">₹{{ "{:,}".format(p.price) }}</span>
+                <span class="price-was">₹{{ "{:,}".format(p.original_price) }}</span>
+              </div>
+              <span class="price-save">Save ₹{{ "{:,}".format(p.original_price - p.price) }}</span>
+            </div>
+
+            <!-- Online Buying Options -->
+            <div class="card-buy-actions">
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="buy_now">
+                <button type="submit" class="btn-card-buy" style="width: 100%;">Buy Now</button>
+              </form>
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-card-bag" style="width: 100%;">+ Add to Bag</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       DISTINCT SECTION 3: GENUINE SPARE PARTS (DISPLAY, MOTHERBOARD, CAMERA, SPEAKER, MIC, ETC.)
+       ========================================================================= -->
+  <section class="distinct-section distinct-spareparts-bg" id="spare-parts">
+    <div class="container">
+
+      <div class="section-head">
+        <span class="section-eyebrow">OEM GRADE REPLACEMENTS</span>
+        <h2 class="section-title">Genuine Spare Parts.</h2>
+        <p class="section-desc">
+          Original displays, motherboards, high-definition camera sensors, stereo speakers, noise-canceling microphones,
+          zero-cycle batteries, and fast-charge ports. Available for purchase online or free fitting at any of our 3
+          Belagavi branches.
+        </p>
+      </div>
+
+      <!-- High-Resolution Spare Parts Workshop Banner -->
+      <div class="spareparts-hero-banner">
+        <img src="{{ url_for('static', filename='images/spare-parts.jpg') }}" alt="Genuine Smartphone Spare Parts"
+          class="spareparts-hero-img">
+        <div class="spareparts-banner-caption">
+          <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 4px;">Precision Tested Internal Components</h3>
+          <p style="font-size: 0.9rem; color: #d1d1d6;">Every motherboard, display panel, and camera assembly is lab
+            verified with thermal imaging and oscilloscopes.</p>
+        </div>
+      </div>
+
+      <div class="product-grid-modern">
+        {% for p in spare_parts %}
+        <div class="card-apple">
+          <div class="card-top">
+            <span class="badge badge-gold">{{ p.badge }}</span>
+            <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ p.warranty }}</span>
+          </div>
+
+          <div class="card-img-box">
+            <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.title }}" class="card-img">
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">{{ p.title }}</h3>
+
+            <div class="card-chips">
+              <span class="chip">{{ p.storage }}</span>
+              {% for spec in p.specs[:2] %}
+              <span class="chip">{{ spec }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="card-pricing-row">
+              <div>
+                <span class="price-curr">₹{{ "{:,}".format(p.price) }}</span>
+                <span class="price-was">₹{{ "{:,}".format(p.original_price) }}</span>
+              </div>
+              <span class="price-save">Save ₹{{ "{:,}".format(p.original_price - p.price) }}</span>
+            </div>
+
+            <!-- Online Buying Options -->
+            <div class="card-buy-actions">
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="buy_now">
+                <button type="submit" class="btn-card-buy" style="width: 100%;">Buy Now</button>
+              </form>
+              <form action="/cart/add/{{ p.id }}" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-card-bag" style="width: 100%;">+ Add to Bag</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       2x2 BENTO PROMO GRID (MATCHING SCREENSHOT)
+       ========================================================================= -->
+  <section class="bento-section">
+    <div class="container">
+      <div class="bento-grid">
+
+        <!-- Tile 1: Watch Series 10 (Light Tile) -->
+        <div class="bento-tile bento-light" id="bento-watch">
+          <span class="bento-eyebrow">WATCH</span>
+          <h3 class="bento-title">SERIES 10</h3>
+          <p class="bento-sub">Thinscredible.</p>
+          <div class="bento-buttons">
+            <a href="#accessories" class="btn-primary">Learn more</a>
+            <a href="#accessories" class="btn-secondary">Buy</a>
+          </div>
+          <div class="bento-img-wrap">
+            <img src="{{ url_for('static', filename='images/watch-series10.jpg') }}" alt="Apple Watch Series 10"
+              class="bento-img">
+          </div>
+        </div>
+
+        <!-- Tile 2: iPad Pro (Light Tile) -->
+        <div class="bento-tile bento-light" id="bento-ipad">
+          <h3 class="bento-title">iPad Pro</h3>
+          <p class="bento-sub">Thinpossible. M4 power unleashed.</p>
+          <div class="bento-buttons">
+            <a href="#services" class="btn-primary">Learn more</a>
+            <a href="#services" class="btn-secondary">Book Service</a>
+          </div>
+          <div class="bento-img-wrap">
+            <img src="{{ url_for('static', filename='images/ipad-pro.jpg') }}" alt="Apple iPad Pro with Magic Keyboard"
+              class="bento-img">
+          </div>
+        </div>
+
+        <!-- Tile 3: Sahil Intelligence / 32-Point Diagnostics (Dark Tile) -->
+        <div class="bento-tile bento-dark">
+          <span class="bento-eyebrow" style="color: var(--apple-cyan);">SAHIL DIAGNOSTIC LAB</span>
+          <h3 class="bento-title" style="color: #ffffff;">Precision Diagnostics.</h3>
+          <p class="bento-sub">Micro-soldering, true-tone recovery & water-damage restoration.</p>
+          <div class="bento-buttons">
+            <a href="#services" class="btn-primary">Explore capabilities &rsaquo;</a>
+          </div>
+          <div class="bento-img-wrap" style="padding: 20px;">
+            <img src="{{ url_for('static', filename='images/repair-lab.jpg') }}" alt="Precision Diagnostics"
+              style="max-height: 220px; border-radius: var(--radius-md);">
+          </div>
+        </div>
+
+        <!-- Tile 4: Sahil Trade-In / Cash Card (Light Tile) -->
+        <div class="bento-tile bento-light">
+          <span class="bento-eyebrow" style="color: #ff9500;">INSTANT BUYBACK</span>
+          <h3 class="bento-title">Trade-In Value</h3>
+          <p class="bento-sub">Get highest cash valuation for your old smartphone instantly.</p>
+          <div class="bento-buttons">
+            <a href="#estimator" class="btn-primary">Get Quote Now</a>
+            <a href="#branches" class="btn-secondary">Visit Store &rsaquo;</a>
+          </div>
+          <div class="bento-img-wrap">
+            <img src="{{ url_for('static', filename='images/apple-card.jpg') }}" alt="Instant Buyback Card"
+              class="bento-img">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SPOTLIGHT / CAROUSEL ROW (APPLE TV+ STYLE IN SCREENSHOT)
+       ========================================================================= -->
+  <section class="spotlight-section">
+    <div class="container">
+      <div class="spotlight-header">
+        <h3 style="font-size: 1.6rem; font-weight: 700; letter-spacing: -0.015em;">Why Belagavi Chooses Sahil Store</h3>
+        <span style="font-size: 0.85rem; color: var(--apple-blue);">3 Branches • Same Day Delivery</span>
+      </div>
+
+      <div class="spotlight-row">
+        <div class="spotlight-card">
+          <div class="spotlight-card-body">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">⚡</span>
+            <h4 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;">Express 30-Min Fix</h4>
+            <p style="font-size: 0.8rem; color: #a1a1a6;">Display and battery replacements finished in under 30 minutes
+              with genuine warranties.</p>
+          </div>
+        </div>
+
+        <div class="spotlight-card">
+          <div class="spotlight-card-body">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">🛡️</span>
+            <h4 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;">6 Months Warranty</h4>
+            <p style="font-size: 0.8rem; color: #a1a1a6;">All pre-owned flagships and spare parts carry verified
+              in-store warranty cards.</p>
+          </div>
+        </div>
+
+        <div class="spotlight-card">
+          <div class="spotlight-card-body">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">🔬</span>
+            <h4 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;">32-Point Inspection</h4>
+            <p style="font-size: 0.8rem; color: #a1a1a6;">Battery cycles, Face ID, cellular bands, and logic board
+              tested by senior engineers.</p>
+          </div>
+        </div>
+
+        <div class="spotlight-card">
+          <div class="spotlight-card-body">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">📍</span>
+            <h4 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;">Pickup at 3 Branches</h4>
+            <p style="font-size: 0.8rem; color: #a1a1a6;">Order online and collect within 10 minutes at Raviwar Peth,
+              Shivaji Nagar or Nehru Nagar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       MASTER REPAIRS & INQUIRY ESTIMATOR (FROM info.md)
+       ========================================================================= -->
+  <section class="repair-section" id="services">
+    <div class="container">
+
+      <div class="repair-layout">
+        <div>
+          <span class="section-eyebrow">PRECISION SMARTPHONE REPAIR</span>
+          <h2 class="section-title">Master Micro-Soldering & Display Lab.</h2>
+          <p class="section-desc">
+            All services listed in Belagavi's official register: Battery replacement, button repair, camera repair,
+            charge port, water-damage repair, display replacement, and tablet care.
+          </p>
+
+          <div class="repair-card-list">
+            {% for s in services %}
+            <div class="repair-pill-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <strong style="color: var(--text-primary); font-size: 0.95rem;">{{ s.name }}</strong>
+                <span
+                  style="font-size: 0.72rem; color: var(--apple-green); background: rgba(48, 209, 88, 0.12); padding: 2px 6px; border-radius: 4px;">{{
+                  s.turnaround }}</span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">{{ s.desc }}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Repair & Buyback Booking Form -->
+        <div class="form-box" id="estimator">
+          <h3 style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+            Book Repair / Device Hold
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+            Select your preferred Belagavi branch and get instant callback.
+          </p>
+
+          <form action="/repair-inquiry" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-input-grid">
+              <div class="form-field">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="e.g. Sahil" required>
+              </div>
+              <div class="form-field">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="e.g. 7019412520" required>
+              </div>
+              <div class="form-field">
+                <label for="model">Device Model</label>
+                <input type="text" id="model" name="model" placeholder="e.g. iPhone 14 Pro" required>
+              </div>
+              <div class="form-field">
+                <label for="service">Required Service / Part</label>
+                <select id="service" name="service">
+                  <option value="Display Replacement">Display Replacement</option>
+                  <option value="Battery Replacement">Battery Replacement</option>
+                  <option value="Water-Damage Restoration">Water-Damage Restoration</option>
+                  <option value="Motherboard IC Repair">Motherboard IC Repair</option>
+                  <option value="Camera Module Repair">Camera Module Repair</option>
+                  <option value="Charging Port / Buttons">Charging Port / Buttons</option>
+                  <option value="Buy Second Hand Phone">Buy Second Hand Phone</option>
+                  <option value="Trade-In Instant Valuation">Trade-In Instant Valuation</option>
+                </select>
+              </div>
+              <div class="form-field" style="grid-column: 1 / -1;">
+                <label for="branch">Select Belagavi Branch</label>
+                <select id="branch" name="branch">
+                  {% for b in branches %}
+                  <option value="{{ b.name }}">{{ b.branch_num }} - {{ b.name }} ({{ b.address }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+              Submit Service Request &rsaquo;
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       3 BELAGAVI BRANCHES SHOWCASE (FROM info.md)
+       ========================================================================= -->
+  <section class="branches-section" id="branches">
+    <div class="container">
+
+      <div class="section-head">
+        <span class="section-eyebrow">LOCATIONS</span>
+        <h2 class="section-title">3 Branches Across Belagavi.</h2>
+        <p class="section-desc">Open Monday through Sunday from 10:00 AM to 8:30 PM.</p>
+      </div>
+
+      <div class="branch-cards-grid">
+
+        <!-- =========================================================================
+             BRANCH 1: SHIVAJI NAGAR
+             ========================================================================= -->
+        <div class="branch-box">
+          <span class="badge badge-blue" style="align-self: flex-start; margin-bottom: 12px;">1st Branch</span>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Shivaji
+            Nagar Branch</h3>
+          <p style="font-size: 0.85rem; color: var(--text-accent); margin-bottom: 14px;">Pre-Owned iPhone Showroom &
+            Rapid Screen Center</p>
+
+          <div
+            style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+            <div>📍 <strong>Address:</strong> 1st Main, 2nd Cross Rd, Shivaji Nagar, Belagavi, Karnataka 590016</div>
+            <div>🏛️ <strong>Landmark:</strong> Near Shivaji Garden</div>
+            <div>📞 <strong>Contact:</strong> <a href="tel:7019412520"
+                style="font-weight: 600; color: var(--text-primary);">+91 7019412520</a></div>
+            <div>🕒 <strong>Hours:</strong> 10:00 AM – 8:30 PM (Mon – Sun)</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: auto;">
+            <a href="tel:7019412520" class="btn-primary" style="flex: 1; padding: 9px; font-size: 0.85rem;">Call
+              Branch</a>
+
+            <!-- >>> PASTE BRANCH 1 GOOGLE MAPS URL IN href BELOW <<< -->
+            <a href="https://www.google.com/maps/place/Sahil+Communication+%26+Mobile+Repairing+Classes+(Main+Branch)/@15.8673726,74.5224087,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbf6711bf58cf3d:0x68873572550a1d0d!8m2!3d15.8673726!4d74.5224087!16s%2Fg%2F11fht1_xvp?entry=ttu&g_ep=EgoyMDI2MDkyOS4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener noreferrer" class="btn-secondary"
+              style="flex: 1; padding: 9px; font-size: 0.85rem;">View Map</a>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             BRANCH 2: RAVIWAR PETH / KHADE BAZAR
+             ========================================================================= -->
+        <div class="branch-box">
+          <span class="badge badge-blue" style="align-self: flex-start; margin-bottom: 12px;">2nd Branch (Main
+            Landmark)</span>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Raviwar Peth
+            / Khade Bazar Branch</h3>
+          <p style="font-size: 0.85rem; color: var(--text-accent); margin-bottom: 14px;">Second Hand Mobiles & Master
+            Micro-Soldering Lab</p>
+
+          <div
+            style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+            <div>📍 <strong>Address:</strong> Kaktives Rd, opp. Devaki Vasati Gruha (Lodging), beside Dargah, Khade
+              Bazar, Raviwar Peth, Belagavi, Karnataka 590001</div>
+            <div>🏛️ <strong>Landmark:</strong> Opposite Zuber Biryaniwala & Beside Dargah</div>
+            <div>📞 <strong>Contact:</strong> <a href="tel:7019412520"
+                style="font-weight: 600; color: var(--text-primary);">+91 7019412520</a></div>
+            <div>🕒 <strong>Hours:</strong> 10:00 AM – 8:30 PM (Mon – Sun)</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: auto;">
+            <a href="tel:7019412520" class="btn-primary" style="flex: 1; padding: 9px; font-size: 0.85rem;">Call
+              Branch</a>
+
+            <!-- >>> PASTE BRANCH 2 GOOGLE MAPS URL IN href BELOW <<< -->
+            <a href="https://www.google.com/maps/place/SAHIL+COMMUNICATION+%26+MOBILE+REPAIRS+(2nd+Branch)/@15.8649162,74.5114099,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbf67612f0f1cf7:0x6b5e8eae47d26189!8m2!3d15.8649162!4d74.5114099!16s%2Fg%2F11ybz5qdnx?entry=ttu&g_ep=EgoyMDI2MDkyOS4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener noreferrer" class="btn-secondary"
+              style="flex: 1; padding: 9px; font-size: 0.85rem;">View Map</a>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             BRANCH 3: SHIVBASAVA NAGAR / NEHRU NAGAR
+             ========================================================================= -->
+        <div class="branch-box">
+          <span class="badge badge-blue" style="align-self: flex-start; margin-bottom: 12px;">3rd Branch</span>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Shivbasava
+            Nagar / Nehru Nagar Branch</h3>
+          <p style="font-size: 0.85rem; color: var(--text-accent); margin-bottom: 14px;">Express Tablet, iPad & Mobile
+            Care Hub</p>
+
+          <div
+            style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+            <div>📍 <strong>Address:</strong> Shop No 3, Siddiqiya Masjid, Shivbasava Nagar Main Rd, Sector 2,
+              Shivabasava Nagar, Nehru Nagar, Belagavi, Karnataka 590010</div>
+            <div>🏛️ <strong>Landmark:</strong> Shop No 3, Siddiqiya Masjid</div>
+            <div>📞 <strong>Contact:</strong> <a href="tel:9964403115"
+                style="font-weight: 600; color: var(--text-primary);">+91 9964403115</a></div>
+            <div>🕒 <strong>Hours:</strong> 10:00 AM – 8:30 PM (Mon – Sun)</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: auto;">
+            <a href="tel:9964403115" class="btn-primary" style="flex: 1; padding: 9px; font-size: 0.85rem;">Call
+              Branch</a>
+
+            <!-- >>> PASTE BRANCH 3 GOOGLE MAPS URL IN href BELOW <<< -->
+            <a href="https://www.google.com/maps/place/Sahil+Communication+%26+Online+Services(+3rd+Branch)/@15.8811329,74.5210683,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbf61c64c3b3703:0x9a16868bd7e24c13!8m2!3d15.8811329!4d74.5210683!16s%2Fg%2F11lv_m7n67?entry=ttu&g_ep=EgoyMDI2MDkyOS4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener noreferrer" class="btn-secondary"
+              style="flex: 1; padding: 9px; font-size: 0.85rem;">View Map</a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CUSTOMER REVIEWS (4.9 ★ FROM info.md)
+       ========================================================================= -->
+  <section class="distinct-section distinct-spareparts-bg" id="reviews">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-eyebrow">REPUTATION</span>
+        <h2 class="section-title">4.9 ★ Verified Rating</h2>
+        <p class="section-desc">Over 120 customers have reviewed Sahil Communication in Belagavi for honest prices and
+          certified work.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        {% for r in reviews %}
+        <div
+          style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 22px;">
+          <div style="color: var(--apple-gold); margin-bottom: 8px;">★★★★★</div>
+          <p style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.45; margin-bottom: 14px;">"{{ r.text
+            }}"</p>
+          <div
+            style="display: flex; justify-content: space-between; font-size: 0.8rem; border-top: 1px solid var(--border-subtle); padding-top: 8px;">
+            <strong>{{ r.name }}</strong>
+            <span style="color: var(--text-accent);">{{ r.device }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       APPLE 5-COLUMN FOOTER
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div
+        style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 30px; font-size: 0.75rem; line-height: 1.6;">
+        * Sahil Communication & Mobile Repairs is an independent premium multi-brand store in Belagavi, Karnataka. All
+        trademarks, logos, and brand names (Apple, iPhone, MacBook, Samsung) belong to their respective copyright
+        holders. All certified pre-owned devices carry store warranties.
+      </div>
+
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h4>Shop Pre-Owned</h4>
+          <ul>
+            <li><a href="#mobiles">iPhones & Androids</a></li>
+            <li><a href="#accessories">AirPods & Audio</a></li>
+            <li><a href="#accessories">MagSafe Chargers</a></li>
+            <li><a href="#spare-parts">OLED Displays</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Genuine Spare Parts</h4>
+          <ul>
+            <li><a href="#spare-parts">Display Assemblies</a></li>
+            <li><a href="#spare-parts">Logic Boards / Motherboards</a></li>
+            <li><a href="#spare-parts">Camera Sensors</a></li>
+            <li><a href="#spare-parts">Microphones & Speakers</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Belagavi Branches</h4>
+          <ul>
+            <li><a href="#branches">1st: Shivaji Nagar</a></li>
+            <li><a href="#branches">2nd: Raviwar Peth (Khade Bazar)</a></li>
+            <li><a href="#branches">3rd: Shivbasava Nagar (Nehru Nagar)</a></li>
+            <li><a href="tel:7019412520">Dial 7019412520</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Store Services</h4>
+          <ul>
+            <li><a href="#services">Water-Damage Recovery</a></li>
+            <li><a href="#services">Screen Replacement</a></li>
+            <li><a href="#services">Battery Diagnostics</a></li>
+            <li><a href="#estimator">Instant Device Buyback</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Admin & Portal</h4>
+          <ul>
+            <li><a href="/admin">Admin Console</a></li>
+            <li><a href="/cart">My Shopping Bag ({{ cart_count }})</a></li>
+            <li><a href="/toggle-theme">Toggle Theme</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        style="border-top: 1px solid var(--border-subtle); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>Copyright &copy; 2026 Sahil Communication & Mobile Repairs. All rights reserved. Belagavi.</div>
+        <div style="display: flex; gap: 14px;">
+          <a href="/admin" style="color: var(--text-secondary);">Admin Login</a>
+          <a href="/cart" style="color: var(--text-secondary);">Bag</a>
+          <a href="#mobiles" style="color: var(--text-secondary);">Mobiles</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+
+    // Auto-close mobile dropdown when navigation link is tapped
+    document.querySelectorAll('.nav-menu a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        var toggle = document.getElementById('nav-toggle');
+        if (toggle) toggle.checked = false;
+      });
+    });
+  </script>
+
+</body>
+
+</html>

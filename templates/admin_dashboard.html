@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Sahil Communication Hub</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="theme-{{ theme }}">
+
+  <!-- Top Admin Nav -->
+  <nav class="global-nav">
+    <div class="nav-container">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge badge-blue admin-badge-desktop">Admin Console</span>
+        <span class="badge badge-blue admin-badge-mobile" style="display: none;">Admin</span>
+        <span class="admin-nav-title" style="font-weight: 700; color: var(--text-primary); font-size: 1.05rem;">Sahil Management Portal</span>
+      </div>
+
+      <div class="nav-actions">
+        <a href="/" target="_blank" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
+          <span class="admin-store-text">View Store</span> &rsaquo;
+        </a>
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Theme">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+        <a href="/admin/logout" class="btn-pill-action" style="color: var(--apple-red); font-size: 0.8rem; padding: 6px 10px;">
+          Sign Out
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-wrap">
+    <div class="container">
+      
+      <!-- Flash Alert -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="background: rgba(48, 209, 88, 0.15); border: 1px solid rgba(48, 209, 88, 0.3); color: var(--apple-green); padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 24px;">
+              ✓ {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Database Backend Status Indicator -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0;">Store Control Center</h1>
+        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 6px 14px; border-radius: var(--radius-pill); background: var(--bg-card); border: 1px solid var(--border-subtle);">
+          <span style="font-weight: 600; color: var(--text-secondary);">Database:</span>
+          {% if is_supabase %}
+            <span class="badge badge-green" style="font-size: 0.75rem;">⚡ Supabase Cloud Connected</span>
+          {% else %}
+            <span class="badge badge-gold" style="font-size: 0.75rem;">📁 Local SQLite Mode (Active)</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Top Metric Cards -->
+      <div class="stats-grid-5">
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Total Online Revenue</div>
+          <div class="stat-metric-val" style="color: var(--apple-green);">₹{{ "{:,}".format(total_revenue) }}</div>
+          <span style="font-size: 0.72rem; color: var(--text-secondary);">From {{ total_orders }} orders</span>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Online Orders</div>
+          <div class="stat-metric-val">{{ total_orders }}</div>
+          <span style="font-size: 0.72rem; color: var(--text-accent);">Pickup & Delivery</span>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Mobiles in Stock</div>
+          <div class="stat-metric-val">{{ mobiles_count }}</div>
+          <span style="font-size: 0.72rem; color: var(--apple-gold);">Pre-Owned Flagships</span>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Accessories</div>
+          <div class="stat-metric-val">{{ accessories_count }}</div>
+          <span style="font-size: 0.72rem; color: var(--text-secondary);">AirPods, Docks, Cases</span>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Spare Parts</div>
+          <div class="stat-metric-val">{{ spare_parts_count }}</div>
+          <span style="font-size: 0.72rem; color: var(--apple-cyan);">Displays, Motherboards</span>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-label">Repair Leads</div>
+          <div class="stat-metric-val">{{ inquiries_count }}</div>
+          <span style="font-size: 0.72rem; color: var(--text-secondary);">Customer inquiries</span>
+        </div>
+      </div>
+
+      <!-- Quick Section Anchor Links (Swipeable horizontal pill bar on mobile) -->
+      <div class="admin-quick-pills">
+        <a href="#section-orders" class="btn-secondary">🛍️ Orders ({{ total_orders }})</a>
+        <a href="#section-products" class="btn-secondary">📦 Products ({{ products|length }})</a>
+        <a href="#section-add-product" class="btn-primary">+ Add Product</a>
+        <a href="#section-inquiries" class="btn-secondary">🔧 Repair Leads ({{ inquiries|length }})</a>
+        <a href="#section-branches" class="btn-secondary">📍 Branches (3)</a>
+      </div>
+
+      <!-- 1. ORDERS MANAGEMENT -->
+      <section id="section-orders" class="admin-section-box">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px;">
+          🛍️ E-Commerce Orders Management
+        </h2>
+        <div class="table-responsive-wrapper">
+          <div class="table-scroll-hint">Swipe horizontally to view all columns &harr;</div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Delivery / Branch</th>
+                <th>Total</th>
+                <th>Payment Mode</th>
+                <th>Status</th>
+                <th>Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in orders %}
+                <tr>
+                  <td><strong>{{ o.order_number }}</strong><br><small style="color: var(--text-secondary);">{{ o.created_at }}</small></td>
+                  <td>{{ o.customer_name }}</td>
+                  <td><a href="tel:{{ o.customer_phone }}">{{ o.customer_phone }}</a></td>
+                  <td>{{ o.delivery_type.replace('_', ' ').title() }}<br><small style="color: var(--text-secondary);">{{ o.branch_pickup }}</small></td>
+                  <td><strong>₹{{ "{:,}".format(o.total_amount) }}</strong></td>
+                  <td><span class="badge badge-blue">{{ o.payment_method.upper() }}</span></td>
+                  <td>
+                    <span class="badge {% if o.status == 'Delivered' %}badge-green{% elif o.status == 'Confirmed' %}badge-blue{% else %}badge-gold{% endif %}">
+                      {{ o.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <form action="/admin/order/status/{{ o.id }}" method="POST" style="display: flex; gap: 6px; align-items: center; margin: 0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <select name="status" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                        <option value="Confirmed" {% if o.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="Processing" {% if o.status == 'Processing' %}selected{% endif %}>Processing</option>
+                        <option value="Ready for Pickup" {% if o.status == 'Ready for Pickup' %}selected{% endif %}>Ready for Pickup</option>
+                        <option value="Dispatched" {% if o.status == 'Dispatched' %}selected{% endif %}>Dispatched</option>
+                        <option value="Delivered" {% if o.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                      </select>
+                      <button type="submit" class="btn-pill-action" style="padding: 4px 10px; font-size: 0.75rem;">Save</button>
+                    </form>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 36px 20px; color: var(--text-secondary);">
+                    <div style="font-size: 2rem; margin-bottom: 8px;">🛍️</div>
+                    <strong style="font-size: 1rem; color: var(--text-primary); display: block; margin-bottom: 4px;">No Customer Orders Yet</strong>
+                    <span style="font-size: 0.85rem;">When customers place orders online or book store pickups, they will appear here in real time.</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. ADD PRODUCT FORM -->
+      <section id="section-add-product" class="admin-section-box">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">
+          ➕ Add New Item to Catalog (Mobiles, Accessories & Spare Parts)
+        </h2>
+
+        <form action="/admin/product/add" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="form-input-grid">
+            <div class="form-field">
+              <label for="category">Category *</label>
+              <select id="category" name="category" required>
+                <option value="mobiles">📱 Second Hand Mobiles</option>
+                <option value="accessories">🎧 Genuine Accessories</option>
+                <option value="spare_parts">⚙️ Genuine Spare Parts</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="title">Product Title *</label>
+              <input type="text" id="title" name="title" placeholder="e.g. iPhone 15 Pro Max 256GB" required>
+            </div>
+
+            <div class="form-field">
+              <label for="condition">Condition / Grade</label>
+              <input type="text" id="condition" name="condition" placeholder="e.g. Sahil Certified Pristine A+">
+            </div>
+
+            <div class="form-field">
+              <label for="battery_health">Battery Health (for Mobiles)</label>
+              <input type="text" id="battery_health" name="battery_health" placeholder="e.g. 98% Battery Health (or N/A)">
+            </div>
+
+            <div class="form-field">
+              <label for="storage">Storage / Compatibility</label>
+              <input type="text" id="storage" name="storage" placeholder="e.g. 256 GB / All iPhone 14 Models">
+            </div>
+
+            <div class="form-field">
+              <label for="color">Color / Finish</label>
+              <input type="text" id="color" name="color" placeholder="e.g. Natural Titanium / Gloss White">
+            </div>
+
+            <div class="form-field">
+              <label for="price">Selling Price (₹) *</label>
+              <input type="number" id="price" name="price" placeholder="74999" required>
+            </div>
+
+            <div class="form-field">
+              <label for="original_price">Original MRP (₹)</label>
+              <input type="number" id="original_price" name="original_price" placeholder="134900">
+            </div>
+
+            <div class="form-field">
+              <label for="warranty">Warranty</label>
+              <input type="text" id="warranty" name="warranty" value="6 Months Sahil In-Store Warranty">
+            </div>
+
+            <div class="form-field">
+              <label for="badge">Badge Text</label>
+              <input type="text" id="badge" name="badge" value="Top Seller">
+            </div>
+
+            <div class="form-field">
+              <label for="image_file">Product Image File (.JPG only) *</label>
+              <input type="file" id="image_file" name="image_file" accept=".jpg,.jpeg,image/jpeg" required>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <small style="color: var(--text-tertiary); font-size: 0.76rem;">
+                  Upload from your file manager (JPG/JPEG format only)
+                </small>
+                <small id="file-error" style="color: var(--apple-red); font-size: 0.76rem; display: none; font-weight: 600;"></small>
+              </div>
+              <!-- Live Image Preview -->
+              <div id="image-preview-wrap" style="display: none; margin-top: 8px; align-items: center; gap: 12px; padding: 8px 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <img id="image-preview-thumb" src="" alt="Selected Preview" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #ffffff; border: 1px solid var(--border-subtle); padding: 2px;">
+                <div style="overflow: hidden; flex: 1;">
+                  <span id="preview-filename" style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary); display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"></span>
+                  <span id="preview-filesize" style="font-size: 0.74rem; color: var(--text-tertiary);"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="specs">Key Specs (Comma Separated)</label>
+              <input type="text" id="specs" name="specs" placeholder="Grade A+, 48MP Camera, True-Tone, Clean IMEI">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="padding: 12px 24px; font-size: 0.95rem;">
+            Save Product to Store &rsaquo;
+          </button>
+        </form>
+      </section>
+
+      <!-- 3. PRODUCTS INVENTORY TABLE -->
+      <section id="section-products" class="admin-section-box">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px;">
+          📦 Current Inventory ({{ products|length }} Items)
+        </h2>
+
+        <div class="table-responsive-wrapper">
+          <div class="table-scroll-hint">Swipe horizontally to view all columns &harr;</div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Category</th>
+                <th>Title</th>
+                <th>Condition / Specs</th>
+                <th>Price</th>
+                <th>Warranty</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in products %}
+                <tr>
+                  <td>
+                    <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="" style="width: 44px; height: 44px; object-fit: contain; background: var(--bg-secondary); border-radius: 4px;">
+                  </td>
+                  <td>
+                    <span class="badge {% if p.category == 'mobiles' %}badge-blue{% elif p.category == 'accessories' %}badge-green{% else %}badge-gold{% endif %}">
+                      {{ p.category.replace('_', ' ').title() }}
+                    </span>
+                  </td>
+                  <td><strong>{{ p.title }}</strong><br><small style="color: var(--text-secondary);">{{ p.storage }} • {{ p.color }}</small></td>
+                  <td>
+                    {{ p.condition }}
+                    {% if p.battery_health != 'N/A' %}<br><span style="color: var(--apple-green); font-size: 0.78rem;">⚡ {{ p.battery_health }}</span>{% endif %}
+                  </td>
+                  <td>
+                    <strong>₹{{ "{:,}".format(p.price) }}</strong>
+                    {% if p.original_price %}<br><small style="color: var(--text-tertiary); text-decoration: line-through;">₹{{ "{:,}".format(p.original_price) }}</small>{% endif %}
+                  </td>
+                  <td><small>{{ p.warranty }}</small></td>
+                  <td>
+                    <form action="/admin/product/delete/{{ p.id }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" style="margin: 0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" style="background: none; border: none; color: var(--apple-red); cursor: pointer; font-size: 0.8rem;">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. REPAIR INQUIRIES LEADS TABLE -->
+      <section id="section-inquiries" class="admin-section-box">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px;">
+          🔧 Customer Repair & Hold Inquiries
+        </h2>
+
+        <div class="table-responsive-wrapper">
+          <div class="table-scroll-hint">Swipe horizontally to view all columns &harr;</div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Device</th>
+                <th>Service Required</th>
+                <th>Branch</th>
+                <th>Status</th>
+                <th>Update</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inq in inquiries %}
+                <tr>
+                  <td><strong>{{ inq.name }}</strong><br><small style="color: var(--text-secondary);">{{ inq.created_at }}</small></td>
+                  <td><a href="tel:{{ inq.phone }}">{{ inq.phone }}</a></td>
+                  <td>{{ inq.model }}</td>
+                  <td><span class="badge badge-blue">{{ inq.service }}</span></td>
+                  <td>{{ inq.branch }}</td>
+                  <td>
+                    <span class="badge {% if inq.status == 'Completed' %}badge-green{% elif inq.status == 'New' %}badge-gold{% else %}badge-blue{% endif %}">
+                      {{ inq.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <form action="/admin/inquiry/status/{{ inq.id }}" method="POST" style="display: flex; gap: 6px; margin: 0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <select name="status" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 4px 6px; border-radius: 4px; font-size: 0.78rem;">
+                        <option value="New" {% if inq.status == 'New' %}selected{% endif %}>New</option>
+                        <option value="Contacted" {% if inq.status == 'Contacted' %}selected{% endif %}>Contacted</option>
+                        <option value="Completed" {% if inq.status == 'Completed' %}selected{% endif %}>Completed</option>
+                      </select>
+                      <button type="submit" class="btn-pill-action" style="padding: 4px 8px; font-size: 0.75rem;">Save</button>
+                    </form>
+                  </td>
+                  <td>
+                    <form action="/admin/inquiry/delete/{{ inq.id }}" method="POST" onsubmit="return confirm('Delete this inquiry?');" style="margin: 0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" style="background: none; border: none; color: var(--apple-red); cursor: pointer; font-size: 0.8rem;">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 36px 20px; color: var(--text-secondary);">
+                    <div style="font-size: 2rem; margin-bottom: 8px;">🔧</div>
+                    <strong style="font-size: 1rem; color: var(--text-primary); display: block; margin-bottom: 4px;">No Repair Leads Yet</strong>
+                    <span style="font-size: 0.85rem;">When customers book repairs or submit device requests, they will appear here.</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. BELAGAVI BRANCHES OVERVIEW -->
+      <section id="section-branches" class="admin-section-box">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px;">
+          📍 Belagavi Branches Management
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+          {% for b in branches %}
+            <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px;">
+              <span class="badge badge-blue" style="margin-bottom: 8px;">{{ b.branch_num }}</span>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">{{ b.name }}</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 10px;">{{ b.address }}</p>
+              {% if b.landmark %}<p style="font-size: 0.8rem; color: var(--text-tertiary); margin-bottom: 8px;">Landmark: {{ b.landmark }}</p>{% endif %}
+              <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">📞 +91 {{ b.phone }}</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">🕒 {{ b.hours }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+
+    // Image Upload & JPG Validation
+    const imageInput = document.getElementById('image_file');
+    const previewWrap = document.getElementById('image-preview-wrap');
+    const previewThumb = document.getElementById('image-preview-thumb');
+    const previewName = document.getElementById('preview-filename');
+    const previewSize = document.getElementById('preview-filesize');
+    const fileError = document.getElementById('file-error');
+
+    if (imageInput) {
+      imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) {
+          if (previewWrap) previewWrap.style.display = 'none';
+          if (fileError) fileError.style.display = 'none';
+          return;
+        }
+
+        const fileName = file.name.toLowerCase();
+        const isJpg = fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || file.type === 'image/jpeg';
+
+        if (!isJpg) {
+          if (fileError) {
+            fileError.textContent = '❌ Only .JPG or .JPEG format allowed!';
+            fileError.style.display = 'inline-block';
+          }
+          alert('Invalid file format! Please select an image in JPG format (.jpg or .jpeg) only.');
+          this.value = ''; // Reset file input
+          if (previewWrap) previewWrap.style.display = 'none';
+          return;
+        }
+
+        if (fileError) fileError.style.display = 'none';
+        if (previewName) previewName.textContent = file.name;
+        if (previewSize) previewSize.textContent = (file.size / 1024).toFixed(1) + ' KB (JPG format verified)';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if (previewThumb) previewThumb.src = e.target.result;
+          if (previewWrap) previewWrap.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+
+</body>
+</html>

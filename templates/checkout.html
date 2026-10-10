@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Sahil Communication Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="theme-{{ theme }}">
+
+  <!-- Global Nav -->
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Store</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="/">Store</a></li>
+        <li class="nav-item"><a href="/cart">Back to Bag</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Theme">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+        <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle Navigation">
+          <span></span><span></span><span></span>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <main class="checkout-page-wrap">
+    <div class="container">
+
+      <div style="margin-bottom: 30px;">
+        <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em;">
+          Checkout.
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">
+          Complete your order with instant branch pickup or door delivery across Belagavi.
+        </p>
+      </div>
+
+      <div class="cart-layout">
+
+        <!-- Form Section -->
+        <div class="cart-items-card">
+          <form action="/checkout" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <h2
+              style="font-size: 1.25rem; font-weight: 700; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+              1. Delivery / Pickup Preference
+            </h2>
+
+            <div class="checkout-pref-grid">
+              <label
+                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; background: var(--bg-secondary);">
+                <input type="radio" name="delivery_type" value="store_pickup" checked style="margin-top: 4px;">
+                <div>
+                  <strong style="color: var(--text-primary); display: block;">🏢 Store Pickup (Free)</strong>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Ready in 10 mins at any of our 3
+                    Belagavi branches.</span>
+                </div>
+              </label>
+
+              <label
+                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; background: var(--bg-secondary);">
+                <input type="radio" name="delivery_type" value="home_delivery" style="margin-top: 4px;">
+                <div>
+                  <strong style="color: var(--text-primary); display: block;">🚚 Home Delivery</strong>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Same-day express delivery in
+                    Belagavi.</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-field" style="margin-bottom: 24px;">
+              <label for="branch_pickup">Select Pickup Branch (or nearest service hub)</label>
+              <select id="branch_pickup" name="branch_pickup">
+                {% for b in branches %}
+                <option value="{{ b.name }}">{{ b.branch_num }} - {{ b.name }} ({{ b.address }})</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <h2
+              style="font-size: 1.25rem; font-weight: 700; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+              2. Contact & Address Details
+            </h2>
+
+            <div class="form-input-grid">
+              <div class="form-field">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" placeholder="e.g. Sahil Khan" required>
+              </div>
+
+              <div class="form-field">
+                <label for="phone">Phone Number (Belagavi) *</label>
+                <input type="tel" id="phone" name="phone" placeholder="e.g. 7019412520" required>
+              </div>
+
+              <div class="form-field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="e.g. sahil@example.com">
+              </div>
+
+              <div class="form-field">
+                <label for="address">Delivery Address / Landmark</label>
+                <input type="text" id="address" name="address" placeholder="e.g. Khade Bazar / Shivaji Nagar, Belagavi">
+              </div>
+            </div>
+
+            <h2
+              style="font-size: 1.25rem; font-weight: 700; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+              3. Payment Option
+            </h2>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
+              <label
+                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; cursor: pointer; display: flex; gap: 10px; align-items: center; background: var(--bg-secondary);">
+                <input type="radio" name="payment_method" value="store_pay" checked>
+                <div>
+                  <strong style="color: var(--text-primary);">Pay at Branch Upon Pickup</strong>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary); display: block;">Inspect the device /
+                    part in person before paying via Cash or UPI.</span>
+                </div>
+              </label>
+
+              <label
+                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; cursor: pointer; display: flex; gap: 10px; align-items: center; background: var(--bg-secondary);">
+                <input type="radio" name="payment_method" value="cod_upi">
+                <div>
+                  <strong style="color: var(--text-primary);">Cash / UPI on Delivery</strong>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary); display: block;">Pay our
+                    technician/courier upon receiving the package.</span>
+                </div>
+              </label>
+
+              <label
+                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; cursor: pointer; display: flex; gap: 10px; align-items: center; background: var(--bg-secondary);">
+                <input type="radio" name="payment_method" value="upi_online">
+                <div>
+                  <strong style="color: var(--text-primary);">Instant Online UPI (GPay / PhonePe / Paytm)</strong>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary); display: block;">Direct payment to Sahil
+                    Communication merchant account.</span>
+                </div>
+              </label>
+            </div>
+
+            <button type="submit" class="btn-primary"
+              style="width: 100%; padding: 15px; font-size: 1.05rem; border-radius: var(--radius-pill);">
+              Place Confirmed Order &rsaquo;
+            </button>
+          </form>
+        </div>
+
+        <!-- Order Summary Side -->
+        <div class="cart-summary-box">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">In Your Bag ({{ cart_items|length }})
+          </h2>
+
+          <div style="max-height: 280px; overflow-y: auto; margin-bottom: 20px;">
+            {% for item in cart_items %}
+            <div
+              style="display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+              <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.title }}"
+                style="width: 50px; height: 50px; object-fit: contain; background: var(--bg-secondary); border-radius: 6px;">
+              <div style="flex: 1; font-size: 0.85rem;">
+                <strong style="color: var(--text-primary); display: block;">{{ item.title }}</strong>
+                <span style="color: var(--text-secondary);">Qty: {{ item.quantity }}</span>
+                <div style="font-weight: 600; color: var(--text-primary);">₹{{ "{:,}".format(item.price * item.quantity)
+                  }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-secondary);">
+            <span>Subtotal</span>
+            <span>₹{{ "{:,}".format(total) }}</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 0.95rem; color: var(--text-secondary);">
+            <span>Delivery & Warranty</span>
+            <span style="color: var(--apple-green);">FREE</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 14px; font-size: 1.3rem; font-weight: 700;">
+            <span>Total Due</span>
+            <span>₹{{ "{:,}".format(total) }}</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="text-align: center;">
+      Copyright &copy; 2026 Sahil Communication & Mobile Repairs. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        var toggle = document.getElementById('nav-toggle');
+        if (toggle) toggle.checked = false;
+      });
+    });
+  </script>
+
+</body>
+
+</html>

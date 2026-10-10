@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You for Your Order | Sahil Communication</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="theme-{{ theme }}">
+
+  <!-- Global Nav -->
+  <nav class="global-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span>Sahil Store</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="/">Store</a></li>
+        <li class="nav-item"><a href="/#mobiles">Second Hand Mobiles</a></li>
+        <li class="nav-item"><a href="/#accessories">Accessories</a></li>
+        <li class="nav-item"><a href="/#spare-parts">Spare Parts</a></li>
+        <li class="nav-item"><a href="/#branches">Branches</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="/toggle-theme" class="btn-theme-toggle" title="Toggle Theme">
+          {% if theme == 'light' %}🌙{% else %}☀️{% endif %}
+        </a>
+        <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle Navigation">
+          <span></span><span></span><span></span>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <main style="padding: 40px 0 80px; min-height: 80vh;">
+    <div class="container" style="max-width: 760px;">
+      
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: clamp(20px, 5vw, 40px); text-align: center; box-shadow: var(--shadow-card);">
+        
+        <div style="width: 64px; height: 64px; background: rgba(48, 209, 88, 0.15); color: var(--apple-green); border-radius: var(--radius-pill); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px;">
+          ✓
+        </div>
+
+        <span class="badge badge-green" style="margin-bottom: 12px;">Order Confirmed</span>
+        <h1 style="font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px;">
+          Thank You, {{ order.customer_name }}!
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 24px;">
+          We have received your order <strong>#{{ order.order_number }}</strong>. A confirmation message has been dispatched to <strong>{{ order.customer_phone }}</strong>.
+        </p>
+
+        <!-- Receipt Card -->
+        <div style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: 24px; text-align: left; margin-bottom: 28px; border: 1px solid var(--border-subtle);">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 16px;">
+            <div>
+              <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Order Number</span>
+              <div style="font-weight: 700; color: var(--text-primary); font-size: 1.1rem;">{{ order.order_number }}</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Status</span>
+              <div style="color: var(--apple-green); font-weight: 600;">{{ order.status }}</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase;">
+              Ordered Items:
+            </div>
+            {% for item in order.order_items %}
+              <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 8px;">
+                <span>{{ item.quantity }}x {{ item.title }}</span>
+                <span style="font-weight: 600;">₹{{ "{:,}".format(item.price * item.quantity) }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700;">
+            <span>Total Amount</span>
+            <span>₹{{ "{:,}".format(order.total_amount) }}</span>
+          </div>
+
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); font-size: 0.85rem; color: var(--text-secondary);">
+            <div><strong>Delivery Method:</strong> {{ order.delivery_type.replace('_', ' ').title() }}</div>
+            <div><strong>Location / Branch:</strong> {{ order.branch_pickup }} {% if order.address %}({{ order.address }}){% endif %}</div>
+            <div><strong>Payment Mode:</strong> {{ order.payment_method.replace('_', ' ').upper() }}</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+          <a href="/" class="btn-primary" style="padding: 12px 28px;">
+            Return to Store
+          </a>
+          <a href="tel:7019412520" class="btn-secondary" style="padding: 12px 28px;">
+            Call Support (+91 7019412520)
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="text-align: center;">
+      Copyright &copy; 2026 Sahil Communication & Mobile Repairs. All rights reserved. Belagavi.
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.btn-theme-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.className = 'theme-' + next;
+        btn.innerHTML = next === 'light' ? '🌙' : '☀️';
+      });
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        var toggle = document.getElementById('nav-toggle');
+        if (toggle) toggle.checked = false;
+      });
+    });
+  </script>
+
+</body>
+</html>
